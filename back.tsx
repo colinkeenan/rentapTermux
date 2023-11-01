@@ -451,8 +451,7 @@ function getFormData(request:any) {
 }
 
 function returnKeyValObj(arr:Array<string>){
-  if (!Array.isArray(arr)) return false;
-  if (arr.length === 1) return false;
+  if (!Array.isArray(arr) || arr.length < 2) return false;
   let propKey = '';
   const formDataEntries: {[key:string]:string} = {};
   const [pKey, ...pValArray] = arr;
