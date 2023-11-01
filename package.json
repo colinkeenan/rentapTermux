@@ -1,0 +1,22 @@
+{
+  "name": "rentapNodeReact",
+  "version": "1.0",
+  "description": "Create and Fill-in Application Forms offline on your own computer.",
+  "module": "back.tsx",
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx ./back.tsx& xdg-open http://localhost:3000/",
+    "stop": "pkill node"
+  },
+  "devDependencies": {
+    "@types/react-dom": "latest",
+    "@types/node": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "react-dom": "latest",
+    "tsx": "latest"
+  }
+}
