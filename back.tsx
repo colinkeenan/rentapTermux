@@ -3,7 +3,6 @@ import { Rentap, EditHeaders } from "./rentap"
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { createServer } from "http";
 import { resolve } from "path";
-import { getFips } from "crypto";
 
 const base64icon = readFileSync("icon.txt", { encoding: 'utf8' });
 //sJfT short for storeJSONfileText.
@@ -427,17 +426,20 @@ function foundFullNamesUpdate() {
 function getFormData(request:any) {
   return new Promise<{[key:string]:string}>((resolve, reject) => {
     try {
-      let contentTypeHeader = request.headers["content-type"];
-      let boundary = "--" + contentTypeHeader.split("; ")[1].replace("boundary=","");
-      let body = [] as any;
+      const contentTypeHeader = request.headers["content-type"];
+      const boundary = "--" + contentTypeHeader.split("; ")[1].replace("boundary=","");
+      const body = [] as any;
       request.on('data', (chunk:any) => { body.push(chunk) });
       request.on('end', () => {
         const formDataSubmitted: {[key:string]:string} = {};
-        body = Buffer.concat(body).toString();
-        let bodyParts = body.split(boundary);
-        bodyParts.forEach(function(val:any){
-          val = val.replace("Content-Disposition: form-data; ","").split(/[\r\n]+/);
-          const formDataEntry = returnKeyValObj(val);
+        const bodyParts = Buffer.concat(body).toString().split(boundary);
+        bodyParts.forEach((val:string) => {
+          // After name=.. there are 2 \r\n before the value - that's the only split I want
+          // So, the regex below splits at the first occurance of \r\n\r\n, and that's it
+          // This way, newlines inside texarea inputs are preserved
+          const formDataEntry = returnKeyValObj(
+            val.replace("Content-Disposition: form-data; ","").split(/\r\n\r\n(.*)/s)
+          );
           if (formDataEntry) Object.assign(formDataSubmitted, formDataEntry);
         })
         if (Object.keys(formDataSubmitted).length) resolve(formDataSubmitted);
@@ -448,20 +450,18 @@ function getFormData(request:any) {
   });
 }
 
-function returnKeyValObj(arr:string){
-  if (!Array.isArray(arr)) {return false};
+function returnKeyValObj(arr:Array<string>){
+  if (!Array.isArray(arr)) return false;
+  if (arr.length === 1) return false;
   let propKey = '';
-  let propVal = '';
   const formDataEntries: {[key:string]:string} = {};
-  arr.forEach((val,index) => {
-    // each key has escaped "" surrounding it like \"key\"
-    if(val.includes('name=\"')){
-      propKey = arr[index].split('name=\"')[1].slice(0, -1); //slice off trailing "
-      propVal = arr[index + 1]
-    }
-    if (propKey) formDataEntries[propKey] = propVal;
-  })
-  if (Object.keys(formDataEntries).length)
-    return formDataEntries;
+  const [pKey, ...pValArray] = arr;
+  // pValArray[0] ends with \r\n (2 characters total)
+  const propVal = pValArray[0].slice(0,-2)
+  // pKey looks like '\r\nname=\"key\"', where \r and \n and \" count as one character each
+  // So, need to remove 8 from start of pKey and 1 from end of pKey
+  if (pKey && pKey.includes('name=\"')) propKey = pKey.slice(8).slice(0,-1);
+  if (propKey) formDataEntries[propKey] = propVal;
+  if (Object.keys(formDataEntries).length) return formDataEntries;
   return false;
 }
