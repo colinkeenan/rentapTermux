@@ -4,6 +4,9 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { createServer } from "http";
 import { resolve } from "path";
 
+// argv: [ 'path/to/node', 'path/to/back.tsx', 'arguements' ], so length of 2 means no args. Any args, then phone is true.
+const phone = !(process.argv.length === 2);
+
 const base64icon = readFileSync("icon.txt", { encoding: 'utf8' });
 //sJfT short for storeJSONfileText.
 const sJfT = existsSync("store.json") ? readFileSync("store.json", { encoding: 'utf8' }) : "";
@@ -275,7 +278,7 @@ const server = createServer(async (req:any, res:any) => {
   if (req.url.includes("header")) {
     const content =
       renderToStaticMarkup(<EditHeaders icon={base64icon}
-        headers={headers} message={messageEditHeaders} editOption={editOption}/>
+        headers={headers} message={messageEditHeaders} editOption={editOption} phone={phone}/>
       );
     res.writeHead(200, {
     'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
@@ -286,7 +289,7 @@ const server = createServer(async (req:any, res:any) => {
       <Rentap icon={base64icon}
         message={message} viewOnly={viewOnly} inTrash={inTrash}
         ap={aps[apID]} searchField={searchField} foundFullNames={foundFullNames} apID={apID}
-        header={headers[headerID]} headerNames={headerNames} />);
+        header={headers[headerID]} headerNames={headerNames} phone={phone}/>);
     res.writeHead(200, {
     'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
     res.end(content);

@@ -7,7 +7,8 @@ const requiredFields = ["FullName", "dateApplied"]; // possibilities: FullName, 
 const fieldsetStyle={display:'inline-block', width:'425px', border:'none'};
 //other styles defined inline or in functions that follow this Rentap function
 
-export function EditHeaders ({headers, icon, message, editOption}: {headers:{[key:string]:any}, icon:string, message:string, editOption:string}) {
+export function EditHeaders ({headers, icon, message, editOption, phone}: {headers:{[key:string]:any}, icon:string, message:string, editOption:string, phone:boolean}) {
+  const maxWidth = phone ? 425 : 1500;
   const headerNames = headers.map((header:any) => header.Name);
   const encodedOptions = headerNames.map((name:any) => encodeURIComponent(name).replaceAll('%20','+'));
   headerNames[0] = "Select Option to Edit"
@@ -17,12 +18,12 @@ export function EditHeaders ({headers, icon, message, editOption}: {headers:{[ke
       <meta charSet="utf-8" />
       <title>Rentap Options</title>
       <link rel="icon" href={`data:image/x-icon;base64,${icon}`} />
-      <header>
+      <header style={{maxWidth: phone ? maxWidth+6 : maxWidth+21 }}>
         <a href='/view'><img src={`data:image/png;base64,${icon}`} alt="Rentap Icon" /></a>
         <div style={{display:'inline-block', fontWeight:'bold', color:'blue'}}> {message} </div>
       </header>
-      <body style={{backgroundColor:rLightBlue}} >
-        <h3 style={{backgroundColor:'darkblue', color:'white', textAlign:'center', maxWidth:'1500'}}>'Applying for:' Options</h3>
+      <body style={{backgroundColor:rLightBlue, maxWidth: phone ? maxWidth+6 : maxWidth+21 }} >
+        <h3 style={{backgroundColor:'darkblue', color:'white', textAlign:'center', maxWidth:maxWidth}}>'Applying for:' Options</h3>
         <fieldset style={fieldsetStyle}>
           <legend style={{color:rGray}}>Delete Option</legend>
           <form action="/delheader" method="post" encType="multipart/form-data"  >
@@ -74,21 +75,22 @@ export function EditHeaders ({headers, icon, message, editOption}: {headers:{[ke
   )
 }
 
-export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames, apID, header, headerNames, inTrash }:
+export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames, apID, header, headerNames, inTrash, phone }:
   {message:string, viewOnly:boolean, inTrash:boolean
     icon:string, ap:{[key:string]:any}, searchField:string, foundFullNames:Array<string>
-   apID:number, header:{[key:string]:any}, headerNames:Array<string>} ) {
+   apID:number, header:{[key:string]:any}, headerNames:Array<string>, phone:boolean} ) {
 
   // when toggling Sort/Unsort button, check whether or not "Sorted:" was inserted at top of list
   const sorted = foundFullNames[0].substring(0,7) === "Sorted:";
+  const maxWidth = phone ? 425 : 1374;
 
   return (
     <>
       <meta charSet="utf-8" />
       <title>Rentap</title>
       <link rel="icon" href={`data:image/x-icon;base64,${icon}`} />
-      <header>
-        <div style={{display:'flex', minHeight:'76px', border:'8px solid white', minWidth:'425px', maxWidth:'1374px'}} >
+      <header style={{maxWidth: phone ? maxWidth+6 : maxWidth+21 }}>
+        <div style={{display:'flex', minHeight:'76px', border:'8px solid white', minWidth:'425px', maxWidth:maxWidth}} >
           <div style={{flex:'grow', textAlign:'center', backgroundColor:'darkred', width:'70px'}} >
             <a href='/view' ><img src={`data:image/png;base64,${icon}`} alt="Rentap Icon" style={{marginTop:'12'}} /></a>
           </div>
@@ -134,19 +136,19 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
         <fieldset style={fieldsetStyle}>
           <legend style={{color:rGray}}>Navigation</legend>
           <form action="/search" method="post" encType="multipart/form-data" style={{margin:'0', marginBottom:'5'}} >
-            <Label forId='searchFields' labelText="Search Field(s)" />
-            <select name="searchFields" id="searchfields" value={searchField} style={{width:'73%', marginLeft:'8', marginBottom:'2' }} onChange={function(){}} >
-              <option value="selectSearchFields" key="selectSearchFields"> ALL  or [ Select field to search ]</option>
-              {Object.keys(ap).map( (key:string) => <option value={key} key={key}>{camelCaseToWords(key)}</option> )}
-            </select>
             <div style={{display:'flex', justifyContent:'space-between'}} >
+              <input type="text" name="search" id="search" placeholder="search" style={{width:'65%'}} />
               <div>
                 <a href="/prev" ><button type="button" style={{backgroundColor:rGray, color:'white' }} >&lt;</button></a>
                 <div style={{backgroundColor:rDisabled, textAlign:'center', display:'inline-block', width:'80px' }}>{apID}</div>
                 <a href="/next" ><button type="button" style={{backgroundColor:rGray, color:'white' }} >&gt;</button></a>
               </div>
-              <input type="text" name="search" id="search" placeholder="search" style={{width:'65%'}} />
             </div>
+            <Label forId='searchFields' labelText="Search Field(s)" />
+            <select name="searchFields" id="searchfields" value={searchField} style={{width:'73%', marginLeft:'8', marginBottom:'2' }} onChange={function(){}} >
+              <option value="selectSearchFields" key="selectSearchFields"> ALL  or [ Select field to search ]</option>
+              {Object.keys(ap).map( (key:string) => <option value={key} key={key}>{camelCaseToWords(key)}</option> )}
+            </select>
           </form>
           <form action="/select" method="post" encType="multipart/form-data"  style={{margin:'0'}}>
             <div style={{width:'100%', display:'flex', justifyContent:'space-between'}}>
@@ -159,7 +161,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
           </form>
         </fieldset>
       </header>
-      <body style={{backgroundColor:rLightBlue}} >
+      <body style={{backgroundColor:rLightBlue, maxWidth: phone ? maxWidth+6 : maxWidth+21 }} >
       <form action="/save" method="post" encType="multipart/form-data" >
         <fieldset style={fieldsetStyle}>
           <legend style={{color:rGray}}>Identity</legend>
