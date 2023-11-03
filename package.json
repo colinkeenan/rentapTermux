@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "npx tsx ./back.tsx& xdg-open http://localhost:3000/",
-    "startphone": "npx tsx ./back.tsx phone& xdg-open http://localhost:3000/",
+    "onecol": "npx tsx ./back.tsx one& xdg-open http://localhost:3000/",
     "stop": "pkill node"
   },
   "devDependencies": {
