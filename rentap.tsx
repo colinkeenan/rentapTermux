@@ -8,9 +8,8 @@ export function EditHeaders ({headers, icon, message, editOption, phone, m}: {he
   const fieldsetStyle={display:'inline-block', width:425*m, border:'none'};
   const maxWidth = phone ? 428*m : 1520*m; // force single-column on phone
   const headerNames = headers.map((header:any) => header.Name);
-  const encodedOptions = headerNames.map((name:any) => encodeURIComponent(name).replaceAll('%20','+'));
   headerNames[0] = "Select Option to Edit"
-  const editRow = editOption ? encodedOptions.indexOf(editOption) : 0;
+  const editRow = editOption ? headerNames.indexOf(editOption) : 0;
   return (
     <>
       <meta charSet="utf-8" />
@@ -138,6 +137,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
             <div style={{display:'flex', justifyContent:'space-between'}} >
               <input type="text" name="search" id="search" placeholder="search" style={{width:'65%', fontSize:21*m}} />
               <div>
+                <input type="submit" defaultValue="&#10003;" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
                 <a href="/prev" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >&lt;</button></a>
                 <div style={{backgroundColor:rDisabled, textAlign:'center', display:'inline-block', width:80*m, fontSize:23.5*m }}>{apID}</div>
                 <a href="/next" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >&gt;</button></a>
