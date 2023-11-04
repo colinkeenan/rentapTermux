@@ -94,7 +94,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
       <title>Rentap</title>
       <link rel="icon" href={`data:image/x-icon;base64,${icon}`} />
       <header style={{maxWidth: maxWidth}}>
-        <div style={{display:'flex', minHeight:76*m, border:'8px solid white', marginBottom:10*m, minWidth:425*m, maxWidth:maxWidth}} >
+        <div style={{display:'flex', minHeight:76*m, border:'8px solid white', marginBottom:10*m, marginLeft:16*m, minWidth:425*m, maxWidth:maxWidth}} >
           <div style={{flex:'grow', textAlign:'center', backgroundColor:'darkred', width:70*m}} >
             <a href='/view' ><img src={`data:image/png;base64,${icon}`} alt="Rentap Icon" style={{marginTop:12*m}} /></a>
           </div>
