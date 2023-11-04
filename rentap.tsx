@@ -5,7 +5,7 @@ const requiredFields = ["FullName", "dateApplied"]; // possibilities: FullName, 
 
 export function EditHeaders ({headers, icon, message, editOption, phone, m}: {headers:{[key:string]:any}, icon:string, message:string, editOption:string, phone:boolean, m:number}) {
   // m is magnification factor
-  const fieldsetStyle={display:'inline-block', width:300*m, border:'none'};
+  const fieldsetStyle={display:'inline-block', width:300*m, border:'none', fontSize:23.5*m};
   const legendStyle={width:'auto', marginLeft:'auto', marginRight:'auto', color:rGray};
   const maxWidth = phone ? 400*m : 1200*m; // force single-column on phone
   const headerNames = headers.map((header:any) => header.Name);
