@@ -1,7 +1,7 @@
 {
   "name": "rentapNodeReact",
-  "version": "1.0",
-  "description": "Create and Fill-in Application Forms offline on your own computer.",
+  "version": "1.04",
+  "description": "Create and Fill-in Application Forms offline on your own computer. Works in Termux on Android.",
   "module": "back.tsx",
   "type": "module",
   "scripts": {

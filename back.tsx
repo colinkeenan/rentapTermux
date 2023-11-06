@@ -95,6 +95,18 @@ const server = createServer(async (req:any, res:any) => {
         foundFullNames.push(n0);
         for (const n of sortedNames) foundFullNames.push(n);
       }
+    case '/go':
+      const goEntry = await getFormData(req);
+      const goID = Number(goEntry.go);
+      if ( !isNaN(goID) && (0 < goID) && (goID < aps.length) ) {
+        apID = goID;
+        inTrash = trash.some((e:any) => e.discardedRow === goID);
+        message = inTrash ? trashMessage : "View";
+        viewOnly = true;
+        headerID = matchHeader(aps[apID].headerName);
+        foundFullNamesUpdate();
+      } else message = "Enter a valid apID";
+      break;
     case '/prev':
       gotoPrevID();
       message = inTrash ? trashMessage : "View";
@@ -109,32 +121,57 @@ const server = createServer(async (req:any, res:any) => {
       if (foundFullNames.length === 1) foundFullNamesUpdate();
       headerID = matchHeader(aps[apID].headerName);
       break;
+    case '/current': // search for existing dateStart without dateStop (should return all aps with agreements that have not terminated)
+      foundFullNames.length = 0;
+      foundFullNames.push(inTrash ? "Search Results in Trash" : "Search Results (not Discarded)");
+      for (const ap of aps) {
+        if (!deleted.some((e:any) => e.deletedRow === aps.indexOf(ap))) { // nothing to search for in deleted aps
+          if (inTrash) { // searching in trash (shouldn't have current agreements in trash, but maybe there by mistake)
+            if(trash.some((e:any) => e.discardedRow === aps.indexOf(ap)) // verify the ap is in trash
+            && ap["dateStart"] && !ap["dateStop"]) {
+              foundFullNames.push(ap.FullName);
+            }
+          } else { // searching aps not in trash
+            if(!trash.some((e:any) => e.discardedRow === aps.indexOf(ap)) // verify the ap is not in trash
+            && ap["dateStart"] && !ap["dateStop"]) {
+              foundFullNames.push(ap.FullName);
+            }
+          }
+        }
+      }
+      if (foundFullNames.length === 1) foundFullNamesUpdate(); // nothing found even though search completed, just show all
+      else apID = matchFullName(foundFullNames[1]);
+      message = inTrash ? trashMessage : "View";
+      viewOnly = true;
+      headerID = matchHeader(aps[apID].headerName);
+      break;
     case '/search':
       const searchEntry = await getFormData(req);
       const search = searchEntry.search.toString();
       searchField = searchEntry.searchFields.toString();
+      foundFullNames.length = 0;
       foundFullNames.push(inTrash ? "Search Results in Trash" : "Search Results (not Discarded)");
-      if (search) // no need to search if the search string is empty
+      if (search) { // no need to search if the search string is empty
         for (const ap of aps) {
-          if (searchField==='selectSearchFields') {
-            if (containsSubstring(ap, search) && !deleted.some((e:any) => e.deletedRow === aps.indexOf(ap))) {
-              if (trash.some((e:any) => e.discardedRow === aps.indexOf(ap)))
-                inTrash && foundFullNames.push(ap.FullName);
-              else !inTrash && foundFullNames.push(ap.FullName);
-            }
-          } else {
-          if (ap[searchField].toString().includes(search) && !deleted.some((e:any) => e.deletedRow === aps.indexOf(ap))) {
-              if (trash.some((e:any) => e.discardedRow === aps.indexOf(ap)))
-                inTrash && foundFullNames.push(ap.FullName);
-              else !inTrash && foundFullNames.push(ap.FullName);
+          if (!deleted.some((e:any) => e.deletedRow === aps.indexOf(ap))) { // nothing to search for in deleted aps
+            if (inTrash) { // searching in trash
+              if(trash.some((e:any) => e.discardedRow === aps.indexOf(ap)) // verify the ap is in trash
+              && containsSubstring(searchField==='selectSearchFields' ? ap : {searchField:ap[searchField]}, search)) {
+                foundFullNames.push(ap.FullName);
+              }
+            } else { // searching aps not in trash
+              if(!trash.some((e:any) => e.discardedRow === aps.indexOf(ap)) // verify the ap is not in trash
+              && containsSubstring(searchField==='selectSearchFields' ? ap : {searchField:ap[searchField]}, search)) {
+                foundFullNames.push(ap.FullName);
+              }
             }
           }
         }
-      else { // no search done because search string was empty
-        foundFullNamesUpdate();
+      } else { // no search done because search string was empty
+        foundFullNamesUpdate(); // just show all
         searchField='selectSearchFields';
       }
-      if (foundFullNames.length === 1) foundFullNamesUpdate(); //if nothing found, just show all
+      if (foundFullNames.length === 1) foundFullNamesUpdate(); // nothing found even though search completed, just show all
       else apID = matchFullName(foundFullNames[1]);
       message = inTrash ? trashMessage : "View";
       viewOnly = true;

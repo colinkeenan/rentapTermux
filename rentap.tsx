@@ -106,27 +106,34 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
           <legend style={legendStyle}>Navigation</legend>
           <div style={{display:'flex', justifyContent:'space-between'}}>
           <div style={{display:'block'}}>
-            <form action="/search" method="post" encType="multipart/form-data" style={{margin:'0'}} >
+            <form action="/go" method="post" encType="multipart/form-data" style={{margin:'0'}}>
               <div style={{display:'flex', justifyContent:'space-between', marginBottom:5*m}} >
-                <input type="text" name="search" id="search" placeholder="search" style={{width:'50%', fontSize:21*m}} />
-                <input type="submit" defaultValue="&#10003;" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+                <div>
+                  <input type="number" name="go" id="go" placeholder="apID" style={{width:80*m, marginRight:5*m, fontSize:21*m}} />
+                  <input type="submit" defaultValue="Go" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+                </div>
+                <a href="/current" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >Current</button></a>
                 <div>
                   <a href="/prev" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >&lt;</button></a>
                   <div style={{backgroundColor:rDisabled, textAlign:'center', display:'inline-block', width:80*m, fontSize:23.5*m }}>{apID}</div>
                   <a href="/next" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >&gt;</button></a>
                 </div>
               </div>
+            </form>
+            <form action="/search" method="post" encType="multipart/form-data" style={{margin:'0'}} >
               <div style={{display:'flex', justifyContent:'space-between', marginBottom:5*m}} >
-                <select name="searchFields" id="searchfields" value={searchField} style={{width:'80%', fontSize:21*m }} onChange={function(){}} >
-                  <option value="selectSearchFields" key="selectSearchFields"> ALL  or [ Select field to search ]</option>
+                <input type="text" name="search" id="search" placeholder="search" style={{width:'45%', fontSize:21*m}} />
+                <input type="submit" defaultValue="&#10003;" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+                <select name="searchFields" id="searchfields" value={searchField} style={{width:'45%', fontSize:21*m }} onChange={function(){}} >
+                  <option value="selectSearchFields" key="selectSearchFields"> All /choose one </option>
                   {Object.keys(ap).map( (key:string) => <option value={key} key={key}>{camelCaseToWords(key)}</option> )}
                 </select>
-                <a href="/sort" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >{sorted ? "Unsort" : "Sort"}</button></a>
               </div>
             </form>
             <form action="/select" method="post" encType="multipart/form-data"  style={{margin:'0'}}>
-              <div style={{display:'flex', justifyContent:'space-between'}}>
-                <select name="select" id="select" value={ap.FullName ? ap.FullName : foundFullNames[0]} style={{width:'80%', fontSize:21*m}} onChange={function(){}} >
+              <div style={{display:'flex', justifyContent:'space-between'}} >
+                <a href="/sort" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >{sorted ? "Unsort" : "Sort"}</button></a>
+                <select name="select" id="select" value={ap.FullName ? ap.FullName : foundFullNames[0]} style={{width:'60%', fontSize:21*m}} onChange={function(){}} >
                   {foundFullNames.map( (name:any) => <option value={name} key={name}>{name}</option> )}
                 </select>
                 <input type="submit" defaultValue="View" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
