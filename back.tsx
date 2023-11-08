@@ -1,3 +1,4 @@
+// {{{ za to toggle fold which includes all the imports and global variables
 import { renderToStaticMarkup } from "react-dom/server";
 import { Rentap, EditHeaders } from "./rentap"
 import { existsSync, readFileSync, writeFileSync } from "fs";
@@ -12,7 +13,7 @@ const base64icon = readFileSync("icon.txt", { encoding: 'utf8' });
 const sJfT = existsSync("store.json") ? readFileSync("store.json", { encoding: 'utf8' }) : "";
 const storeArray = sJfT ? JSON.parse(sJfT) : {};
 // Setting up aps, headers, trash, deleted using ? : instead of just defining them and then if() to change because would have to use "let" to be able to change them in if()
-const aps = sJfT ? storeArray.aps : [{"FullName":"","SSN":"","BirthDate":"","MaritalStatus":"","Email":"","StateID":"","Phone1":"","Phone2":"","CurrentAddress":"","PriorAddresses":"","ProposedOccupants":"","ProposedPets":"","Income":"","Employment":"","Evictions":"","Felonies":"","dateApplied":"","dateStart":"","dateStop":"","headerName":""}];
+const aps = sJfT ? storeArray.aps : [{"FullName":"","SSN":"","BirthDate":"","MaritalStatus":"","Email":"","StateID":"","Phone1":"","Phone2":"","CurrentAddress":"","PriorAddresses":"","headerName":"","ProposedOccupants":"","ProposedPets":"","Income":"","Employment":"","Evictions":"","Felonies":"","dateStart":"","dateStop":"","dateApplied":""}];
 const trash = sJfT ? storeArray.trash : [{"discardedRow":0}];
 const deleted = sJfT ? storeArray.deleted : [{"deletedRow":0}];
 const trashMessage="Viewing Discarded Applications in Trash"
@@ -43,14 +44,15 @@ let inTrash = false;
 let searchField='selectSearchFields'
 let apID = 0;
 let headerID = 0;
+// }}}
 
 const host = 'localhost';
 const port = 3000;
-
 const server = createServer(async (req:any, res:any) => {
 
-    // A bunch of path-handlers for the Rentap page follows. After those, the rest are for the
-    // Applying for Options page. A render follows the switch.
+  // A bunch of path-handlers for the Rentap page follows. After those, the rest are for the
+  // Applying for Options page. A render follows the switch.
+  // {{{ za to toggle fold: entire switch should be same for both Bun & Termux
 
   switch (req.url) {
     case '/':
@@ -95,6 +97,7 @@ const server = createServer(async (req:any, res:any) => {
         foundFullNames.push(n0);
         for (const n of sortedNames) foundFullNames.push(n);
       }
+    break;
     case '/go':
       const goEntry = await getFormData(req);
       const goID = Number(goEntry.go);
@@ -182,7 +185,7 @@ const server = createServer(async (req:any, res:any) => {
       message = inTrash ? trashMessage : "View";
       viewOnly = true;
       if (foundFullNames.length === 1) foundFullNamesUpdate();
-      apID = matchFullName(selectedFullName.select);
+      apID = matchFullName(selectedFullName.select.toString());
       headerID = matchHeader(aps[apID].headerName);
       break;
     case '/trash':
@@ -291,7 +294,7 @@ const server = createServer(async (req:any, res:any) => {
     case '/editheader':
       messageEditHeaders = 'Rentap';
       const selOption = await getFormData(req);
-      editOption = selOption.select;
+      editOption = selOption.select.toString();
       break;
     case '/saveheader':
       const headerSave = await getFormData(req);
@@ -314,14 +317,16 @@ const server = createServer(async (req:any, res:any) => {
     default:
       return new Response("Not Found", { status: 404 });
   }
+// }}}
 
   if (req.url.includes("header")) {
     const content =
-      renderToStaticMarkup(<EditHeaders icon={base64icon}
+      renderToStaticMarkup(
+      <EditHeaders icon={base64icon}
         headers={headers} message={messageEditHeaders} editOption={editOption} phone={phone} n={phone?2:1}/>
       );
     res.writeHead(200, {
-    'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
+      'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
     res.end(content);
   } else {
     const content =
@@ -331,7 +336,7 @@ const server = createServer(async (req:any, res:any) => {
         ap={aps[apID]} searchField={searchField} foundFullNames={foundFullNames} apID={apID}
         header={headers[headerID]} headerNames={headerNames} phone={phone} n={phone?2:1}/>);
     res.writeHead(200, {
-    'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
+      'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
     res.end(content);
   }
 });
@@ -340,6 +345,7 @@ server.listen(port, host, () => {
     console.log(`Listening on http://${host}:${port}`);
 });
 
+// {{{ za to toggle fold: all these functions should be same for both Bun & Termux
 function formatArray(arrObj:Array<Object>) {
   // write each array element on it's own line if there's more than one
   const [a0, ...aRest] = arrObj;
@@ -364,7 +370,7 @@ function matchFullName(fullName:string) {
 
 function containsSubstring(obj:{[key:string]: any}, substring:string) {
   for (const key in obj)
-    if (obj[key].toString().includes(substring)) return true;
+    if (obj[key] && obj[key].toString().includes(substring)) return true;
   return false;
 }
 
@@ -427,15 +433,6 @@ function gotoNextID() {
         apID < aps.length-1 ? apID++ : apID=0;
 }
 
-function saveAll() {
-  const fAps = formatArray(aps);
-  const fHeaders = formatArray(headers);
-  const fTrash = formatArray(trash);
-  const fDeleted = formatArray(deleted);
-  const formattedStore = `\{"aps":${fAps}, "headers":${fHeaders}, "trash":${fTrash}, "deleted":${fDeleted}\}`;
-  writeFileSync("./store.json", formattedStore);
-}
-
 function foundFullNamesUpdate() {
   foundFullNames.length = 0;
   foundFullNames.push(sort ?
@@ -451,23 +448,17 @@ function foundFullNamesUpdate() {
     }
   }
 }
+// }}}
 
-// https://www.section.io/engineering-education/a-raw-nodejs-rest-api-without-frameworks-such-as-express/
-// function getReqData(req:any) {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       let body = "";
-//       req.on("data", (chunk:any) => {
-//           body += chunk; // I removed .toString();
-//       });
-//       req.on("end", () => {
-//           resolve(body);
-//       });
-//     } catch (error) {
-//         reject(error);
-//     }
-//   });
-// }
+function saveAll() {
+  const fAps = formatArray(aps);
+  const fHeaders = formatArray(headers);
+  const fTrash = formatArray(trash);
+  const fDeleted = formatArray(deleted);
+  const formattedStore = `\{"aps":${fAps}, "headers":${fHeaders}, "trash":${fTrash}, "deleted":${fDeleted}\}`;
+  // this last line is why saveAll() can't be the same for both Bun and Termux
+  writeFileSync("./store.json", formattedStore);
+}
 
 // https://stackoverflow.com/questions/40576255/nodejs-how-to-parse-multipart-form-data-without-frameworks
 function getFormData(request:any) {
