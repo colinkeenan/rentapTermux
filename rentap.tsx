@@ -2,10 +2,11 @@ const rGray = '#57606F';
 const rDisabled = '#b4cefb'
 const rLightBlue = '#77aaff'
 const requiredFields = ["FullName", "dateApplied"]; // possibilities: FullName, SSN, BirthDate, Email, StateID, Phone1, Phone2, dateApplied, dateStart, dateStop
+const fS = {"lbl":14,"a":21, "tbl":22, "p":23.5, "h3":28}; // font sizes
 
 export function EditHeaders ({headers, icon, message, editOption, phone, m}: {headers:{[key:string]:any}, icon:string, message:string, editOption:string, phone:boolean, m:number}) {
   // m is magnification factor
-  const fieldsetStyle={display:'inline-block', width:300*m, border:'none', fontSize:23.5*m};
+  const fieldsetStyle={display:'inline-block', width:300*m, border:'none', fontSize:fS.p*m};
   const legendStyle={width:'auto', marginLeft:'auto', marginRight:'auto', color:rGray};
   const maxWidth = phone ? 400*m : 1200*m; // force single-column on phone
   const headerNames = headers.map((header:any) => header.Name);
@@ -18,28 +19,28 @@ export function EditHeaders ({headers, icon, message, editOption, phone, m}: {he
       <link rel="icon" href={`data:image/x-icon;base64,${icon}`} />
       <header style={{maxWidth: maxWidth }}>
         <a href='/view'><img src={`data:image/png;base64,${icon}`} alt="Rentap Icon" /></a>
-        <div style={{display:'inline-block', fontWeight:'bold', color:'blue', fontSize:23.5*m}}> {message} </div>
+        <div style={{display:'inline-block', fontWeight:'bold', color:'blue', fontSize:fS.p*m}}> {message} </div>
       </header>
       <body style={{backgroundColor:rLightBlue, maxWidth: maxWidth }} >
-        <h3 style={{backgroundColor:'darkblue', color:'white', textAlign:'center', maxWidth:maxWidth, fontSize:28*m}}>'Applying for:' Options</h3>
+        <h3 style={{backgroundColor:'darkblue', color:'white', textAlign:'center', maxWidth:maxWidth, fontSize:fS.h3*m}}>'Applying for:' Options</h3>
         <fieldset style={fieldsetStyle}>
           <legend style={legendStyle}>Delete Option</legend>
           <form action="/delheader" method="post" encType="multipart/form-data" style={{display:'flex', justifyContent:'center'}} >
-            <input type="submit" defaultValue="X" style={{backgroundColor:'darkred', color:'white', fontSize:23.5*m}} />
+            <Submit name="X" m={m}/>
             <Field type= "number" name="Row" placeholder="Row" width="30%" viewOnly={false} m={m}/>
           </form>
         </fieldset>
         <fieldset style={fieldsetStyle}>
           <legend style={legendStyle}>Edit Option</legend>
           <form action="/editheader" method="post" encType="multipart/form-data" style={{display:'flex'}}  >
-            <select name="select" id="select" style={{fontSize:21*m, width:'100%'}}  value={headerNames[editRow]} onChange={function(){}} >
+            <select name="select" id="select" style={{fontSize:fS.a*m, width:'100%'}}  value={headerNames[editRow]} onChange={function(){}} >
               {headerNames.map( (name:string) => <option value={name} key={name}>{name}</option> )}
             </select>
-            <input type="submit" defaultValue="Edit" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+            <Submit name="Edit" m={m}/>
           </form>
           <form action="/saveheader" method="post" encType="multipart/form-data">
             <div style={{display:'flex'}}>
-              <input type="submit" defaultValue="Save" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+              <Submit name="Save" m={m}/>
               <Field type= "text" name="Name" placeholder="" width="100%" ap={headers[editRow]} viewOnly={true} m={m} />
             </div>
             <Field type= "text" name="StreetAddress" placeholder="Street Address" width="100%" ap={headers[editRow]} viewOnly={false} m={m} />
@@ -51,7 +52,7 @@ export function EditHeaders ({headers, icon, message, editOption, phone, m}: {he
           <legend style={legendStyle}>Add Option</legend>
           <form action="/addheader" method="post" encType="multipart/form-data">
             <div style={{display:'flex'}}>
-              <input type="submit" defaultValue="+" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+              <Submit name="+" m={m}/>
               <Field type= "text" name="Name" placeholder="Unique Option Name" width="100%" viewOnly={false} m={m} />
             </div>
             <Field type= "text" name="StreetAddress" placeholder="Street Address" width="100%" viewOnly={false} m={m} />
@@ -82,7 +83,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
     icon:string, ap:{[key:string]:any}, searchField:string, foundFullNames:Array<string>
    apID:number, header:{[key:string]:any}, headerNames:Array<string>, phone:boolean, m:number} ) {
 
-  const fieldsetStyle={display:'inline-block', width:425*m, border:'none', fontSize:23.5*m};
+  const fieldsetStyle={display:'inline-block', width:425*m, border:'none', fontSize:fS.p*m};
   const legendStyle={width:'auto', marginLeft:'auto', marginRight:'auto', color:rGray};
   // when toggling Sort/Unsort button, check whether or not "Sorted:" was inserted at top of list
   const sorted = foundFullNames[0].substring(0,7) === "Sorted:";
@@ -98,7 +99,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
           <div style={{flex:'grow', textAlign:'center', backgroundColor:'darkred', width:70*m}} >
             <a href='/view' ><img src={`data:image/png;base64,${icon}`} alt="Rentap Icon" style={{marginTop:12*m}} /></a>
           </div>
-          <div style={{flex: 1, alignItems:'center', minHeight:54*m, fontWeight:'bold', textAlign:'center', backgroundColor:'darkblue', color:'white', fontSize:23.5*m }}>
+          <div style={{flex: 1, alignItems:'center', minHeight:54*m, fontWeight:'bold', textAlign:'center', backgroundColor:'darkblue', color:'white', fontSize:fS.p*m }}>
             <p> {message} </p>
           </div>
         </div>
@@ -109,22 +110,22 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
             <form action="/go" method="post" encType="multipart/form-data" style={{margin:'0'}}>
               <div style={{display:'flex', justifyContent:'space-between', marginBottom:5*m}} >
                 <div>
-                  <input type="number" name="go" id="go" placeholder="apID" style={{width:80*m, marginRight:5*m, fontSize:21*m}} />
-                  <input type="submit" defaultValue="Go" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+                  <input type="number" name="go" id="go" placeholder="apID" style={{width:80*m, marginRight:5*m, fontSize:fS.a*m}} />
+                  <Submit name="Go" m={m}/>
                 </div>
-                <a href="/current" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >Current</button></a>
+                  <Lbutton link="/current" text="Current" m={m}/>
                 <div>
-                  <a href="/prev" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >&lt;</button></a>
-                  <div style={{backgroundColor:rDisabled, textAlign:'center', display:'inline-block', width:80*m, fontSize:23.5*m }}>{apID}</div>
-                  <a href="/next" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >&gt;</button></a>
+                  <Lbutton link="/prev" text="&lt;" m={m}/>
+                  <div style={{backgroundColor:rDisabled, textAlign:'center', display:'inline-block', width:80*m, fontSize:fS.p*m }}>{apID}</div>
+                  <Lbutton link="/next" text="&gt;" m={m}/>
                 </div>
               </div>
             </form>
             <form action="/search" method="post" encType="multipart/form-data" style={{margin:'0'}} >
               <div style={{display:'flex', justifyContent:'space-between', marginBottom:5*m}} >
-                <input type="text" name="search" id="search" placeholder="search" style={{width:'45%', fontSize:21*m}} />
-                <input type="submit" defaultValue="&#10003;" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
-                <select name="searchFields" id="searchfields" value={searchField} style={{width:'45%', fontSize:21*m }} onChange={function(){}} >
+                <input type="text" name="search" id="search" placeholder="search" style={{width:'45%', fontSize:fS.a*m}} />
+                <Submit name="&#10003;" m={m}/>
+                <select name="searchFields" id="searchfields" value={searchField} style={{width:'45%', fontSize:fS.a*m }} onChange={function(){}} >
                   <option value="selectSearchFields" key="selectSearchFields"> All /choose one </option>
                   {Object.keys(ap).map( (key:string) => <option value={key} key={key}>{camelCaseToWords(key)}</option> )}
                 </select>
@@ -132,11 +133,11 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
             </form>
             <form action="/select" method="post" encType="multipart/form-data"  style={{margin:'0'}}>
               <div style={{display:'flex', justifyContent:'space-between'}} >
-                <a href="/sort" ><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m }} >{sorted ? "Unsort" : "Sort"}</button></a>
-                <select name="select" id="select" value={ap.FullName ? ap.FullName : foundFullNames[0]} style={{width:'60%', fontSize:21*m}} onChange={function(){}} >
+                <Lbutton link="/sort" text={sorted ? "Unsort" : "Sort"} m={m}/>
+                <select name="select" id="select" value={ap.FullName ? ap.FullName : foundFullNames[0]} style={{width:'60%', fontSize:fS.a*m}} onChange={function(){}} >
                   {foundFullNames.map( (name:any) => <option value={name} key={name}>{name}</option> )}
                 </select>
-                <input type="submit" defaultValue="View" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+                <Submit name="View" m={m}/>
               </div>
             </form>
           </div>
@@ -146,16 +147,16 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
           <legend style={legendStyle}>Applying for:</legend>
           <div style={{display:'flex', justifyContent:'center'}}>
             <div style={{display:'block', color:'black'}}>
-              <h3 style={{fontSize:28*m, margin:'0'}}>{header.Title ? header.Title : "Title"}</h3>
-              <p style={{fontSize:23.5*m, marginTop:'0', marginBottom:5*m}}>
+              <h3 style={{fontSize:fS.h3*m, margin:'0'}}>{header.Title ? header.Title : "Title"}</h3>
+              <p style={{fontSize:fS.p*m, marginTop:'0', marginBottom:5*m}}>
                 {header.StreetAddress ? header.StreetAddress : "Street Address"}
                 <br/> {header.CityStateZip ? header.CityStateZip : "City, ST Zip"}
               </p>
               <form action="/selectapplyingfor" method="post" encType="multipart/form-data" style={{margin:'0', marginBottom:5*m, display:'flex', justifyContent:'space-between'}} >
-                <select name="selectApplyingFor" id="selectapplyingfor" style={{ display:'inline-block', width:'73%', fontSize:21*m }} value={header.Name} onChange={function(){}} required>
+                <select name="selectApplyingFor" id="selectapplyingfor" style={{ display:'inline-block', width:'73%', fontSize:fS.a*m }} value={header.Name} onChange={function(){}} required>
                   {headerNames.map( (name:string) => <option value={name} key={name}>{name}</option> )}
                 </select>
-                <input type="submit" defaultValue="Update" style={{backgroundColor:'darkblue', color:'white', fontSize:21*m}} />
+                <Submit name="Update" m={m}/>
               </form>
             </div>
           </div>
@@ -165,20 +166,19 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
           <div style={{display:'flex', justifyContent:'right'}}>
           <div style={{display:'block'}}>
             <div style={{display:'flex', justifyContent:'space-between', marginBottom:5*m}}>
-              <a href="/"><button type="button" style={{backgroundColor:'darkblue', color:'white', fontWeight:'bold', fontSize:21*m }} >New</button></a>
+              <Lbutton link="/" text="New" m={m}/>
               {!apID ? "" :
-                <a href={viewOnly?'/edit':'/view'}> <button type="button" style={{backgroundColor:'darkblue', color:'white', fontWeight:'bold', fontSize:21*m}}> {viewOnly?'Edit':'View'}</button></a>
+                <Lbutton link={viewOnly?'/edit':'/view'} text={viewOnly?'Edit':'View'} m={m}/>
               }
             </div>
             <div style={{marginBottom:5*m}}>
               {ap.FullName==="Deleted apID:" + apID ? <div>&bull</div> :
-                <a href={inTrash ? "/restore" : "/discard"}><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m}}>{inTrash ? "Restore" : "Discard"}</button></a>
+                <Lbutton link={inTrash ? "/restore" : "/discard"} text={inTrash ? "Restore" : "Discard"} m={m}/>
               }
               <div style={{backgroundColor:'gray', color:'white', textAlign:'center', display:'inline-block'}}>{'||'}</div>
-              <a href={inTrash ? "/exittrash" : "/trash"}><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:21*m}}>{inTrash ? "Exit Trash" : "View Discarded"}</button></a>
+              <Lbutton link={inTrash ? "/exittrash" : "/trash"} text={inTrash ? "Exit Trash" : "View Discarded"} m={m}/>
             </div>
-            <a href={inTrash ? "/delete" : "/editheaders"} ><button type="button" style={{backgroundColor:inTrash ? 'darkred' : rGray, color:'white', fontSize:21*m}} >
-              {inTrash ? "Delete (This is Permanent)" : "Edit 'Applying for:' Options"}</button></a>
+            <Lbutton link={inTrash ? "/delete" : "/editheaders"} text={inTrash ? "Delete (This is Permanent)" : "Edit 'Applying for:' Options"} m={m}/>
           </div>
           </div>
         </fieldset>
@@ -202,7 +202,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
           <legend style={legendStyle}>Situation</legend>
           <Label forId="headername" labelText="Applying for:" m={m} />
             <select name="headerName" id="headername"
-              style={{width:'73%', marginLeft:8*m, marginBottom:2*m, fontSize:21*m }}
+              style={{width:'73%', marginLeft:8*m, marginBottom:2*m, fontSize:fS.a*m }}
               value={header.Name} onChange={function(){}} disabled={viewOnly} required>
               {headerNames.map( (name:string) => <option value={name} key={name}>{name}</option> )}
             </select>
@@ -223,7 +223,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
                                                               <Field type="date" name="dateStop"  placeholder="" width='36%' ap={ap} viewOnly={viewOnly} m={m} />
         </fieldset>
         <Label forId="dateapplied" labelText="Applied" m={m}/> <Field type="date" name="dateApplied" placeholder="" width='auto' ap={ap} viewOnly={viewOnly} m={m} />
-        {viewOnly ? "" : <input type="submit" defaultValue="Save" style={{backgroundColor:'darkblue', color:'white', marginLeft:15*m, fontSize:21*m}} />}
+        {viewOnly ? "" : <><div style={{marginLeft:15*m}}></div> <Submit name="Save" m={m}/></>}
       </form>
       </body>
     </>
@@ -232,7 +232,7 @@ export function Rentap({message, viewOnly, icon, ap, searchField, foundFullNames
 
 function Label({forId, labelText, m}: {forId:string, labelText:string, m:number}) {
   return (
-    <label htmlFor={forId} style={{width:106*m, display:'inline-block', color:'white', textAlign:'right', fontSize:14*m}} > {labelText} </label>
+    <label htmlFor={forId} style={{width:106*m, display:'inline-block', color:'white', textAlign:'right', fontSize:fS.lbl*m}} > {labelText} </label>
   )
 }
 
@@ -240,7 +240,7 @@ function Field({type, name, placeholder, width, ap, viewOnly, m}: { type: string
   const required = requiredFields.some((r:string) => r === name);
   return (
     <input type={type} name={name} id={name.toLowerCase()} placeholder={placeholder}
-      style={{width:width, marginBottom:2*m, backgroundColor:viewOnly?rDisabled:'white', fontSize:21*m}}
+      style={{width:width, marginBottom:2*m, backgroundColor:viewOnly?rDisabled:'white', fontSize:fS.a*m}}
       value={ap ? ap[name] : ""} readOnly={viewOnly} onChange={function(){}} required={required} />
   )
 }
@@ -248,26 +248,38 @@ function Field({type, name, placeholder, width, ap, viewOnly, m}: { type: string
 function TextArea({rows, name, placeholder, ap, viewOnly, m}: { rows:number, name:string, placeholder:string, ap: {[key:string]: any}, viewOnly: boolean, m:number }) {
   return (
     <textarea rows={rows} name={name} placeholder={placeholder}
-      style={{width:'100%', marginBottom:2*m, backgroundColor:viewOnly?rDisabled:'white', fontSize:21*m}}
+      style={{width:'100%', marginBottom:2*m, backgroundColor:viewOnly?rDisabled:'white', fontSize:fS.a*m}}
       defaultValue={ap[name]} readOnly={viewOnly} onChange={function(){}} />
   )
 }
 
 function Td({text,m}:{text:string,m:number}) {
   return (
-    <td style={{backgroundColor:rDisabled, paddingLeft:10*m, paddingRight:10*m, fontSize:22*m}}>{text}</td>
+    <td style={{backgroundColor:rDisabled, paddingLeft:10*m, paddingRight:10*m, fontSize:fS.tbl*m}}>{text}</td>
   )
 }
 
 function TdR({text,m}:{text:string, m:number}) {
   return (
-    <td style={{backgroundColor:rDisabled, paddingLeft:10*m, paddingRight:10*m, textAlign:'right', fontSize:22*m}}>{text}</td>
+    <td style={{backgroundColor:rDisabled, paddingLeft:10*m, paddingRight:10*m, textAlign:'right', fontSize:fS.tbl*m}}>{text}</td>
   )
 }
 
 function Th({text,m}:{text:string, m:number}) {
   return (
-    <th style={{backgroundColor:rDisabled, paddingLeft:10*m, paddingRight:10*m, fontSize:22*m}}>{text}</th>
+    <th style={{backgroundColor:rDisabled, paddingLeft:10*m, paddingRight:10*m, fontSize:fS.tbl*m}}>{text}</th>
+  )
+}
+
+function Submit({name,m}:{name:string, m:number}) {
+  return (
+    <input type="submit" name={name} id={name.toLowerCase()} defaultValue={name} style={{backgroundColor:'darkblue', color:'white', fontSize:fS.a*m}}/>
+  )
+}
+
+function Lbutton({link, text, m}:{link:string, text:string, m:number}) {
+  return (
+    <a href={link}><button type="button" style={{backgroundColor:rGray, color:'white', fontSize:fS.a*m }} >{text}</button></a>
   )
 }
 
