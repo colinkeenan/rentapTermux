@@ -318,7 +318,7 @@ const server = createServer(async (req:any, res:any) => {
   if (req.url.includes("header")) {
     const content =
       renderToStaticMarkup(<EditHeaders icon={base64icon}
-        headers={headers} message={messageEditHeaders} editOption={editOption} phone={phone} m={phone?2:1}/>
+        headers={headers} message={messageEditHeaders} editOption={editOption} phone={phone} n={phone?2:1}/>
       );
     res.writeHead(200, {
     'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
@@ -329,7 +329,7 @@ const server = createServer(async (req:any, res:any) => {
       <Rentap icon={base64icon}
         message={message} viewOnly={viewOnly} inTrash={inTrash}
         ap={aps[apID]} searchField={searchField} foundFullNames={foundFullNames} apID={apID}
-        header={headers[headerID]} headerNames={headerNames} phone={phone} m={phone?2:1}/>);
+        header={headers[headerID]} headerNames={headerNames} phone={phone} n={phone?2:1}/>);
     res.writeHead(200, {
     'Content-Type': 'text/html' }); // creates necessary html header and code 200 means everything's ok
     res.end(content);
