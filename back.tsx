@@ -9,6 +9,7 @@ import { resolve } from "path";
 const phone = !(process.argv.length === 2);
 
 const base64icon = readFileSync("icon.txt", { encoding: 'utf8' });
+const base64trash = readFileSync("trash.txt", { encoding: 'utf8'});
 //sJfT short for storeJSONfileText.
 const sJfT = existsSync("store.json") ? readFileSync("store.json", { encoding: 'utf8' }) : "";
 const storeArray = sJfT ? JSON.parse(sJfT) : {};
@@ -322,7 +323,7 @@ const server = createServer(async (req:any, res:any) => {
   if (req.url.includes("header")) {
     const content =
       renderToStaticMarkup(
-      <EditHeaders icon={base64icon}
+      <EditHeaders icon={base64icon} trash={base64trash}
         headers={headers} message={messageEditHeaders} editOption={editOption} phone={phone} n={phone?2:1}/>
       );
     res.writeHead(200, {
@@ -331,7 +332,7 @@ const server = createServer(async (req:any, res:any) => {
   } else {
     const content =
       renderToStaticMarkup(
-      <Rentap icon={base64icon}
+      <Rentap icon={base64icon} trash={base64trash}
         message={message} viewOnly={viewOnly} inTrash={inTrash}
         ap={aps[apID]} searchField={searchField} foundFullNames={foundFullNames} apID={apID}
         header={headers[headerID]} headerNames={headerNames} phone={phone} n={phone?2:1}/>);
